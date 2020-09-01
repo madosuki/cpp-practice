@@ -1,6 +1,49 @@
+
 #include <iostream>
 #include <array>
 #include <string>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+std::vector<int> GetPrimeCollection(const int &n)
+{
+
+  std::vector<int> tmp = {};
+  std::vector<int> result = {};
+  const int period = sqrt(n);
+
+  
+  for(int i = 2; i <= n; ++i) {
+    tmp.push_back(i);
+  }
+
+  int index = 0;
+
+  while(true)
+    {
+
+      if(tmp[0] >= period) {
+        result.insert(result.end(),
+                      std::make_move_iterator(tmp.begin()), std::make_move_iterator(tmp.end()));
+
+        return result;
+      }
+      
+      result.push_back(tmp[0]);
+
+      int target = tmp[0];
+      
+      auto a = std::remove_if(tmp.begin(), tmp.end(), [target](int x) { return x % target == 0; });
+      
+      tmp.erase(a, tmp.end());
+
+      ++index;
+    }
+
+  
+}
+
 
 // 整形
 std::string shape(const std::string& str) {
@@ -34,29 +77,38 @@ std::string shape(const std::string& str) {
 }
 
 // 素因数分解関数
-std::string factoring(const int &num, std::array<int, 10> prime, const int& point, std::string r) {
-    if((num % prime[point]) == 0) {
-        int result = num / prime[point];
-        std::string o = r + " * " + std::to_string(prime[point]);
-        return factoring(result, prime, point, o);
-    } else if((int)prime.size() == point) {
-        std::string fr = r.substr(3);
-        return fr;
-    } else {
-        return factoring(num, prime, (point + 1), r);
-    }
+std::string fact_in_prime(const int &num, const std::vector<int> &prime, const int& point, std::string r) {
+
+  if((int)prime.size() == point) {
+    auto fr = r.substr(3);
+    return fr;
+  }
+  
+  if((num % prime[point]) == 0) {
+    int result = num / prime[point];
+    std::string o = r + " * " + std::to_string(prime[point]);
+    return fact_in_prime(result, prime, point, o);
+  } else {
+    return fact_in_prime(num, prime, (point + 1), r);
+  }
 }
 
 int main() {
-    // 素数コレクション。適当。
-    constexpr std::array<int, 10> prime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+  // 素数コレクション。適当。
+  // constexpr std::array<int, 10> prime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+
+  auto list = GetPrimeCollection(128);
+  for(const auto &i : list) {
+    std::cout << i << "\n";
+  }
+  
+  // 素因数分解したい数。
+  constexpr int num = 600;
     
-    // 素因数分解したい数。
-    constexpr int num = 600;
-    
-    std::string result = factoring(num, prime, 0, "");
-    std::string finalresult = shape(result);
-    printf("素因数分解 整形前 %s\n", result.c_str());
-    printf("素因数分解 整形後 %s\n", finalresult.c_str());
-    return 0;
+  std::string result = fact_in_prime(num, list, 0, "");
+  std::string finalresult = shape(result);
+  printf("素因数分解 整形前 %s\n", result.c_str());
+  printf("素因数分解 整形後 %s\n", finalresult.c_str());
+  
+  return 0;
 }

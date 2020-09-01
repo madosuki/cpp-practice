@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+a.out
+
+peda-session-a.out.txt
