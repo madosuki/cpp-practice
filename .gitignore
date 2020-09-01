@@ -34,3 +34,5 @@
 a.out
 
 peda-session-a.out.txt
+
+.gdb_history
